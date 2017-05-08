@@ -147,10 +147,28 @@ module.exports =
     classHideStatusBar = 'vim-mode-plus--hide-status-bar'
     classActivePaneAxis = 'vim-mode-plus--active-pane-axis'
 
+    editor = atom.workspace.getActiveTextEditor()
     workspaceElement = getView(atom.workspace)
     paneElement = getView(atom.workspace.getActivePane())
+    activeTextEditor = getView(atom.workspace.getActiveTextEditor())
+    maximizePaneWidth = atom.config.get 'editor.preferredLineLength'
 
     workspaceClassNames = [classPaneMaximized]
+
+    # Set width
+    requestAnimationFrame ->
+      activeTextEditor.style.width = "#{editor.getDefaultCharWidth() * maximizePaneWidth}px"
+
+    # Listen to font-size changes and update the view width
+    @fontChanged = atom.config.onDidChange 'editor.fontSize', ->
+      requestAnimationFrame ->
+        activeTextEditor.style.width = "#{editor.getDefaultCharWidth() * maximizePaneWidth}px"
+
+    # Listen for a pane change to update the view width
+    @paneChanged = atom.workspace.onDidChangeActivePaneItem ->
+      requestAnimationFrame ->
+        activeTextEditor.style.width = "#{editor.getDefaultCharWidth() * maximizePaneWidth}px"
+
     workspaceClassNames.push(classHideTabBar) if settings.get('hideTabBarOnMaximizePane')
     workspaceClassNames.push(classHideStatusBar) if settings.get('hideStatusBarOnMaximizePane')
 
@@ -166,6 +184,7 @@ module.exports =
       forEachPaneAxis (axis) ->
         getView(axis).classList.remove(classActivePaneAxis)
       workspaceElement.classList.remove(workspaceClassNames...)
+      activeTextEditor.style.width = ''
 
     @subscribe(@maximizePaneDisposable)
 

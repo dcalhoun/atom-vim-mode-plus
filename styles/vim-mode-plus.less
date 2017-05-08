@@ -302,23 +302,21 @@ atom-workspace.vim-mode-plus--pane-maximized {
       display: none;
     }
     atom-pane {
+      border: none !important;
       .item-views {
         background: @syntax-background-color !important;
       }
       display: none;
       &.active {
         display: flex;
-        position: absolute;
-        top: 0;
-        right: 0;
-        left: 0;
-        bottom: 0;
-        z-index: 100;
       }
     }
   }
+  // TODO: Weirdness when visiting preferences while maximized.
+  // TODO: Extra padding on left when maximizing right pane.
   atom-text-editor:not(.mini) {
-    margin-left: 20%;
+    margin: 0 auto;
+    max-width: 100%;
   }
   &.vim-mode-plus--hide-tab-bar {
     .tab-bar {
